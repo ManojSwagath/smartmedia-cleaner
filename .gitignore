@@ -1,0 +1,31 @@
+# Android / Gradle
+.gradle/
+build/
+**/build/
+
+# Bundled Gradle distribution (keep repo small)
+_gradle_dist/
+gradle-*-bin.zip
+
+# Local SDK config (per-machine)
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Keystore files
+*.jks
+*.keystore
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini

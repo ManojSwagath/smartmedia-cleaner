@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Some Added</string>
+    <string name="scan">Scan</string>
+    <string name="total_images_placeholder">Total number of images: -</string>
+    <string name="total_size_placeholder">Total size occupied: -</string>
+    <string name="total_images_value">Total number of images: %1$d</string>
+    <string name="total_size_value">Total size occupied: %1$s</string>
+    <string name="permission_denied">Permission denied. Cannot analyze images.</string>
+    <string name="scan_failed">Scan failed: %1$s</string>
+</resources>
