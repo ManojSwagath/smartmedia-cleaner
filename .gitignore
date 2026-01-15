@@ -29,3 +29,12 @@ local.properties
 # Windows
 Thumbs.db
 Desktop.ini
+
+# VS Code
+.vscode/
+
+# Python
+.venv/
+
+# Local build artifacts / exports
+dist/

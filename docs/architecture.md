@@ -1,44 +1,71 @@
 # Architecture and Data Flow
 
-## Components
-- **Activity**: `MainActivity` owns the UI, permission flow, and launches the scan coroutine.
-- **UI layout**: `res/layout/activity_main.xml` hosts the button, progress bar, and result text views.
-- **Persistence**: `SharedPreferences` snapshot stores last scan count/bytes/timestamp to show deltas.
-- **Media access**: `MediaStore.Images` query enumerates images with ID, size, name, and timestamps.
-- **Hashing**: 8x8 average hash (perceptual) on sampled images to group near-duplicates.
+This app is an on-device, Play-safe media cleaner that scans the Android MediaStore, computes lightweight analysis on thumbnails, and deletes only via Android system confirmation.
 
-## Flow
-1. **Permission**: On button tap, request `READ_MEDIA_IMAGES` (API 33+) or `READ_EXTERNAL_STORAGE` (API <=32). If denied, show toast.
-2. **Scan** (`analyzeMedia`):
-   - Query MediaStore for all images → `MediaItem` list + total bytes.
-   - Compute aggregate stats (count, bytes → GB string).
-   - Sample up to 400 items, compute average hash per item, bucket identical hashes → duplicate groups.
-   - Sort largest files by size; oldest by `DATE_ADDED` when present.
-   - Build delta text vs previous snapshot; persist new snapshot.
-3. **UI update**: Back on main thread, fade-in updated texts (totals, deltas, duplicates, top lists) and hide loader.
+---
 
-## Key methods (all in `MainActivity`)
-- `runImageAnalysis()`: permission gate, loader state, coroutine launch.
-- `loadMediaItems()`: MediaStore query to `MediaItem` list + byte sum.
-- `computeAverageHash(Uri)`: decode downsampled bitmap, 8x8 luminance grid → 64-bit string.
-- `findDuplicateGroups()`: hash buckets → `DuplicateGroup` list sorted by total size.
-- `formatTopList()`, `formatBytesShort()`, `buildDeltaText()`: presentation helpers.
-- `loadSnapshot()` / `saveSnapshot()`: read/write `SharedPreferences` for last scan.
+## High-level modules
 
-## UI contracts
-- IDs used in code exist in `activity_main.xml` (`analyzeButton`, `loadingBar`, `totalImagesText`, etc.).
-- Theme `Theme.App` in `values/themes.xml` matches `android:theme` in `AndroidManifest.xml`.
+### UI layer (Activities)
+- `MainActivity`: permission gate, scan dashboard (totals + folder list), entry points to all cleanup features.
+- `FolderDetailActivity`: grid of images for a MediaStore bucket (folder) with multi-select + delete.
+- `MediaQueryActivity`: reusable grid for any MediaStore filter/sort (WhatsApp, Screenshots, Large, Oldest).
+- `IdsGridActivity`: reusable “review these IDs” grid; supports “Select suggested” + delete.
+- `SimilarDuplicatesActivity`: runs duplicate analysis and shows clusters.
+- `BlurryCandidatesActivity`: runs blur analysis and opens a pre-selected review grid.
+- `BurstDetectionActivity`: groups rapid shots (“bursts”) and shows groups.
 
-## Threading
-- Media scan and hashing run on `Dispatchers.IO` inside `lifecycleScope.launch`.
-- UI updates happen on the main thread after `withContext` completes.
+### Data access
+- `MediaStoreRepository`: all MediaStore queries live here (scan totals, bucket breakdown, fetch media by bucket/IDs, list images for analysis).
 
-## Data limits and constants
-- `TOP_COUNT = 5`: number of largest/oldest shown.
-- `MAX_HASH_ITEMS = 400`: cap for hashing to avoid heavy work on large libraries.
-- Hashing uses `inSampleSize=8` to keep memory low.
+### Analysis
+- `ThumbnailLoader`: loads small thumbnails only (never full-res).
+- `ImageAnalysis`: dHash (difference hash) + blur score (variance of Laplacian).
+- `DuplicateClustering`: candidate generation + Hamming distance filtering → clusters.
+- `BurstGrouping`: groups by bucket + time gap window.
 
-## Extending
-- Add deletions/actions for duplicate groups by requesting write permissions and using `ContentResolver` deletes.
-- Add paging or search by augmenting the MediaStore query with selection/sort.
-- Replace average hash with pHash/dHash for better robustness.
+### Caching
+- `AnalysisCacheDb`: SQLite cache of dHash + blur score per media ID, keyed by size/date-taken.
+- `AnalysisPipeline`: runs analysis with cache hits to avoid re-processing on repeat scans.
+
+### Background work
+- `BackgroundIndexWorker` (WorkManager): periodic, battery-friendly job that:
+   - refreshes totals via `MediaStoreRepository.scanDashboard()`
+   - warms the analysis cache for a bounded set of recent images
+- `BackgroundIndexScheduler`: schedules unique periodic work (`ExistingPeriodicWorkPolicy.KEEP`).
+
+---
+
+## Data flow (what talks to what)
+
+1) UI screen requests a dataset
+- Activities call `MediaStoreRepository` to fetch:
+   - totals/buckets for dashboard, or
+   - a list of items for a grid, or
+   - a bounded list of basics for analysis.
+
+2) Optional analysis step (Similar/Blurry/Bursts)
+- Activity calls `AnalysisPipeline.analyze()` with a list of `MediaItemBasic`.
+- Pipeline:
+   - looks up cached analysis in `AnalysisCacheDb`
+   - loads thumbnails for missing/changed items via `ThumbnailLoader`
+   - computes dHash/blur via `ImageAnalysis`
+   - upserts results back into SQLite.
+
+3) Clustering/grouping
+- Duplicate clusters: `DuplicateClustering.cluster(analyzed)`
+- Bursts: `BurstGrouping.group(analyzed)`
+
+4) Review + delete
+- Review screens (folder/query/ids grid) show a thumbnail grid and allow multi-select.
+- Delete is always user-confirmed:
+   - Android 11+ uses `MediaStore.createDeleteRequest()` → system confirmation UI.
+   - Android 10 uses recoverable security exceptions where possible.
+
+---
+
+## Performance principles
+- Always analyze thumbnails (~128px), not full images.
+- Use background threads (coroutines) and keep UI responsive.
+- Cache analysis to avoid repeating expensive steps.
+- Limit first-pass analysis size; extend to incremental/background indexing later.

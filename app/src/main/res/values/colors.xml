@@ -1,8 +1,19 @@
 <resources>
     <color name="primary">#2563EB</color>
     <color name="on_primary">#FFFFFF</color>
-    <color name="background">#F6F7FB</color>
-    <color name="on_background">#1F2937</color>
+    <color name="background">#F8FAFC</color>
+    <color name="on_background">#0F172A</color>
     <color name="surface">#FFFFFF</color>
-    <color name="on_surface">#111827</color>
+    <color name="on_surface">#334155</color>
+
+    <color name="outline">#E2E8F0</color>
+
+    <color name="feature_whatsapp">#22C55E</color>
+    <color name="feature_screenshots">#7C3AED</color>
+    <color name="feature_large">#F97316</color>
+    <color name="feature_oldest">#06B6D4</color>
+    <color name="feature_duplicates">#3B82F6</color>
+    <color name="feature_blurry">#6366F1</color>
+    <color name="feature_bursts">#F59E0B</color>
+    <color name="feature_events">#14B8A6</color>
 </resources>
