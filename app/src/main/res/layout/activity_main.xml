@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="?android:attr/colorBackground"
         app:title="@string/app_name"
-        app:titleTextColor="@color/on_background"
-        app:subtitleTextColor="@color/on_surface"
+        app:titleTextColor="?attr/colorOnSurface"
+        app:subtitleTextColor="?attr/colorOnSurface"
         app:elevation="0dp" />
 
     <androidx.core.widget.NestedScrollView
@@ -37,8 +37,8 @@
                 app:cardCornerRadius="24dp"
                 app:cardElevation="2dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outline"
-                app:cardBackgroundColor="@color/surface">
+                app:strokeColor="?attr/colorOutline"
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,17 +50,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/home_headline"
-                        android:textColor="@color/on_background"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="@style/TextAppearance.App.Headline" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="@string/home_subtitle"
-                        android:textColor="@color/on_surface"
-                        android:textSize="14sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="@style/TextAppearance.App.Body" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/analyzeButton"
@@ -82,7 +81,7 @@
                         android:layout_marginTop="12dp"
                         android:indeterminate="true"
                         android:visibility="gone"
-                        android:indeterminateTint="@color/primary" />
+                        android:indeterminateTint="?attr/colorPrimary" />
 
                     <TextView
                         android:id="@+id/totalImagesText"
@@ -90,8 +89,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
                         android:text="@string/total_images_placeholder"
-                        android:textColor="@color/on_background"
-                        android:textSize="15sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="@style/TextAppearance.App.Body" />
 
                     <TextView
                         android:id="@+id/totalSpaceText"
@@ -99,8 +98,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="@string/total_size_placeholder"
-                        android:textColor="@color/on_background"
-                        android:textSize="15sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="@style/TextAppearance.App.Body" />
 
                     <TextView
                         android:id="@+id/lastScanText"
@@ -108,8 +107,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/last_scan_placeholder"
-                        android:textColor="@color/on_background"
-                        android:textSize="13sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="@style/TextAppearance.App.Caption" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -126,9 +125,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/cleanup_tools"
-                    android:textColor="@color/on_background"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="@style/TextAppearance.App.SectionTitle" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/settingsButton"
@@ -156,9 +154,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="@string/folders"
-                android:textColor="@color/on_background"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="@style/TextAppearance.App.SectionTitle" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/foldersRecycler"

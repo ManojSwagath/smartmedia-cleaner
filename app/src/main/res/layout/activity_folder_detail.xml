@@ -1,65 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_margin="@dimen/space_md"
+        style="@style/Widget.App.GlassCard">
 
-        <TextView
-            android:id="@+id/folderTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/folder_detail_title"
-            android:textColor="@color/on_background"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="@dimen/space_md">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:navigationIcon="@drawable/ic_back"
+                app:navigationIconTint="?attr/colorOnSurface"
+                app:titleTextAppearance="@style/TextAppearance.App.Title"
+                app:titleTextColor="?attr/colorOnSurface" />
+
+            <!-- Legacy ID kept; no longer shown as the title (use topAppBar.title). -->
+            <TextView
+                android:id="@+id/folderTitle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
 
         <TextView
             android:id="@+id/selectedText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="@dimen/space_xs"
             android:text="Selected: 0"
-            android:textColor="@color/on_surface"
-            android:textSize="14sp" />
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="@style/TextAppearance.App.Body" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/selectSuggestedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:backgroundTint="@color/surface"
+            android:layout_marginTop="@dimen/space_sm"
             android:text="@string/select_suggested"
-            android:textColor="@color/on_surface"
+            android:textColor="?attr/colorOnSurface"
+            style="@style/Widget.App.PrimaryButton"
+            app:backgroundTint="@color/glass_surface"
+            app:strokeColor="?attr/colorOutline"
+            app:strokeWidth="1dp"
             android:visibility="gone" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/selectAllButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/surface"
+            android:layout_marginTop="@dimen/space_xs"
             android:text="@string/select_all"
-            android:textColor="@color/on_surface"
+            android:textColor="?attr/colorOnSurface"
+            style="@style/Widget.App.PrimaryButton"
+            app:backgroundTint="@color/glass_surface"
+            app:strokeColor="?attr/colorOutline"
+            app:strokeWidth="1dp"
             android:visibility="gone" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/deleteButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:backgroundTint="@color/primary"
+            android:layout_marginTop="@dimen/space_sm"
             android:enabled="false"
             android:text="@string/delete_selected"
-            android:textColor="@color/on_primary" />
-    </LinearLayout>
+            android:textColor="?attr/colorOnError"
+            style="@style/Widget.App.PrimaryButton"
+            app:backgroundTint="?attr/colorError" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mediaRecycler"
@@ -67,6 +91,34 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="8dp" />
+        android:layoutAnimation="@anim/layout_fade_in_grid"
+        android:padding="@dimen/space_md" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/emptyStateCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_md"
+        android:visibility="gone"
+        style="@style/Widget.App.GlassCard">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/space_lg">
+
+            <TextView
+                android:id="@+id/emptyStateText"
+                style="@style/TextAppearance.App.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nothing_found"
+                android:textColor="?attr/colorOnSurface" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

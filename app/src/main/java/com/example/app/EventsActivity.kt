@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -16,10 +17,11 @@ import java.text.DateFormat
 
 class EventsActivity : AppCompatActivity() {
 
-    private lateinit var titleText: TextView
+    private lateinit var topAppBar: MaterialToolbar
     private lateinit var statusText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var listRecycler: RecyclerView
+    private lateinit var emptyStateCard: View
 
     private lateinit var repository: MediaStoreRepository
     private lateinit var adapter: EventsAdapter
@@ -30,12 +32,14 @@ class EventsActivity : AppCompatActivity() {
 
         repository = MediaStoreRepository(this)
 
-        titleText = findViewById(R.id.titleText)
+        topAppBar = findViewById(R.id.topAppBar)
         statusText = findViewById(R.id.statusText)
         progressBar = findViewById(R.id.progressBar)
         listRecycler = findViewById(R.id.listRecycler)
+        emptyStateCard = findViewById(R.id.emptyStateCard)
 
-        titleText.text = getString(R.string.events)
+        topAppBar.title = getString(R.string.events)
+        topAppBar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         statusText.text = getString(R.string.analyzing)
         progressBar.isIndeterminate = true
 
@@ -65,6 +69,8 @@ class EventsActivity : AppCompatActivity() {
                 if (basics.isEmpty()) {
                     statusText.text = getString(R.string.nothing_found)
                     progressBar.visibility = View.GONE
+                    emptyStateCard.visibility = View.VISIBLE
+                    listRecycler.visibility = View.GONE
                     return@launch
                 }
 
@@ -73,7 +79,10 @@ class EventsActivity : AppCompatActivity() {
                 }
 
                 progressBar.visibility = View.GONE
-                statusText.text = if (events.isEmpty()) getString(R.string.nothing_found) else "${events.size} events"
+                val isEmpty = events.isEmpty()
+                emptyStateCard.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                listRecycler.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                statusText.text = if (isEmpty) getString(R.string.nothing_found) else "${events.size} events"
                 adapter.submitList(events)
 
             } catch (e: Exception) {

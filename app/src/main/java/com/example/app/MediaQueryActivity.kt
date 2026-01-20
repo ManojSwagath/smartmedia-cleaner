@@ -19,17 +19,19 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MediaQueryActivity : AppCompatActivity() {
 
-    private lateinit var titleText: TextView
+    private lateinit var topAppBar: MaterialToolbar
     private lateinit var selectedText: TextView
     private lateinit var deleteButton: Button
     private lateinit var selectAllButton: Button
     private lateinit var mediaRecycler: RecyclerView
+    private lateinit var emptyStateCard: android.view.View
 
     private lateinit var repository: MediaStoreRepository
     private lateinit var adapter: MediaAdapter
@@ -77,13 +79,15 @@ class MediaQueryActivity : AppCompatActivity() {
         selectionArgs = intent.getStringArrayExtra(EXTRA_SELECTION_ARGS)
         sortOrder = intent.getStringExtra(EXTRA_SORT_ORDER)
 
-        titleText = findViewById(R.id.folderTitle)
+        topAppBar = findViewById(R.id.topAppBar)
         selectedText = findViewById(R.id.selectedText)
         deleteButton = findViewById(R.id.deleteButton)
         selectAllButton = findViewById(R.id.selectAllButton)
         mediaRecycler = findViewById(R.id.mediaRecycler)
+        emptyStateCard = findViewById(R.id.emptyStateCard)
 
-        titleText.text = queryTitle
+        topAppBar.title = queryTitle
+        topAppBar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         adapter = MediaAdapter(
             onSelectionChanged = { selectedCount ->
@@ -116,6 +120,11 @@ class MediaQueryActivity : AppCompatActivity() {
         deleteButton.setOnClickListener {
             val selected = adapter.getSelectedItems()
             if (selected.isEmpty()) return@setOnClickListener
+            animatePopOffSelected(
+                recyclerView = mediaRecycler,
+                selectedIds = adapter.getSelectedIdsSnapshot(),
+                idAtPosition = { pos -> adapter.idAtPosition(pos) }
+            )
             requestDelete(selected.map { it.contentUri })
         }
 
@@ -134,7 +143,12 @@ class MediaQueryActivity : AppCompatActivity() {
                 }
                 currentItems = items
                 adapter.submitList(items)
-                selectAllButton.visibility = if (items.isEmpty()) android.view.View.GONE else android.view.View.VISIBLE
+                val isEmpty = items.isEmpty()
+                emptyStateCard.visibility = if (isEmpty) android.view.View.VISIBLE else android.view.View.GONE
+                mediaRecycler.visibility = if (isEmpty) android.view.View.GONE else android.view.View.VISIBLE
+                selectAllButton.visibility = if (isEmpty) android.view.View.GONE else android.view.View.VISIBLE
+                deleteButton.isEnabled = false
+                selectedText.text = getString(R.string.selected_count_value, 0)
             } catch (e: Exception) {
                 Toast.makeText(
                     this@MediaQueryActivity,

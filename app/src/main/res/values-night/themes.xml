@@ -11,21 +11,7 @@
 
         <item name="android:statusBarColor" tools:targetApi="l">@color/background</item>
         <item name="android:navigationBarColor" tools:targetApi="o_mr1">@color/background</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimation_App</item>
-    </style>
-
-    <style name="Theme.App.Splash" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/primary</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@color/primary</item>
-        <item name="android:navigationBarColor" tools:targetApi="o_mr1">@color/primary</item>
-        <item name="android:windowFullscreen">true</item>
-    </style>
-
-    <style name="WindowAnimation_App">
-        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
-        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
-        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
-        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
     </style>
 </resources>

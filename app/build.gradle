@@ -49,4 +49,7 @@ dependencies {
 
     // Pinch-to-zoom for preview.
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    // Real-time blur for glassmorphism (RenderEffect on API 31+, legacy fallback below).
+    implementation 'com.github.Dimezis:BlurView:version-3.2.0'
 }

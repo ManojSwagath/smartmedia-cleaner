@@ -20,18 +20,20 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class IdsGridActivity : AppCompatActivity() {
 
-    private lateinit var titleText: TextView
+    private lateinit var topAppBar: MaterialToolbar
     private lateinit var selectedText: TextView
     private lateinit var selectSuggestedButton: Button
     private lateinit var selectAllButton: Button
     private lateinit var deleteButton: Button
     private lateinit var mediaRecycler: RecyclerView
+    private lateinit var emptyStateCard: android.view.View
 
     private lateinit var repository: MediaStoreRepository
     private lateinit var adapter: MediaAdapter
@@ -77,15 +79,17 @@ class IdsGridActivity : AppCompatActivity() {
         ids = intent.getLongArrayExtra(EXTRA_IDS) ?: longArrayOf()
         suggestedDeleteIds = intent.getLongArrayExtra(EXTRA_SUGGESTED_DELETE_IDS) ?: longArrayOf()
 
-        titleText = findViewById(R.id.folderTitle)
+        topAppBar = findViewById(R.id.topAppBar)
         selectedText = findViewById(R.id.selectedText)
         selectSuggestedButton = findViewById(R.id.selectSuggestedButton)
         selectAllButton = findViewById(R.id.selectAllButton)
         deleteButton = findViewById(R.id.deleteButton)
         mediaRecycler = findViewById(R.id.mediaRecycler)
+        emptyStateCard = findViewById(R.id.emptyStateCard)
 
         val screenTitle = title.toString()
-        titleText.text = screenTitle
+        topAppBar.title = screenTitle
+        topAppBar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         adapter = MediaAdapter(
             onSelectionChanged = { selectedCount ->
@@ -127,6 +131,11 @@ class IdsGridActivity : AppCompatActivity() {
         deleteButton.setOnClickListener {
             val selected = adapter.getSelectedItems()
             if (selected.isEmpty()) return@setOnClickListener
+            animatePopOffSelected(
+                recyclerView = mediaRecycler,
+                selectedIds = adapter.getSelectedIdsSnapshot(),
+                idAtPosition = { pos -> adapter.idAtPosition(pos) }
+            )
             requestDelete(selected.map { it.contentUri })
         }
 
@@ -141,7 +150,13 @@ class IdsGridActivity : AppCompatActivity() {
                 }
                 currentItems = items
                 adapter.submitList(items, preselectedIds = suggestedDeleteIds.toSet())
-                selectAllButton.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+                val isEmpty = items.isEmpty()
+                emptyStateCard.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                mediaRecycler.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                selectAllButton.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                selectSuggestedButton.visibility = if (!isEmpty && suggestedDeleteIds.isNotEmpty()) View.VISIBLE else View.GONE
+                deleteButton.isEnabled = false
+                selectedText.text = getString(R.string.selected_count_value, 0)
             } catch (e: Exception) {
                 Toast.makeText(
                     this@IdsGridActivity,

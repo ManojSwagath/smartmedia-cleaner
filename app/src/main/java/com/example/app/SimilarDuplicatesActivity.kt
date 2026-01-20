@@ -10,17 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SimilarDuplicatesActivity : AppCompatActivity() {
 
-    private lateinit var titleText: TextView
+    private lateinit var topAppBar: MaterialToolbar
     private lateinit var statusText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var actionButton: Button
     private lateinit var listRecycler: RecyclerView
+    private lateinit var emptyStateCard: View
 
     private lateinit var repository: MediaStoreRepository
     private lateinit var adapter: ClusterAdapter
@@ -33,13 +35,15 @@ class SimilarDuplicatesActivity : AppCompatActivity() {
         repository = MediaStoreRepository(this)
         cacheDb = AnalysisCacheDb(this)
 
-        titleText = findViewById(R.id.titleText)
+        topAppBar = findViewById(R.id.topAppBar)
         statusText = findViewById(R.id.statusText)
         progressBar = findViewById(R.id.progressBar)
         actionButton = findViewById(R.id.actionButton)
         listRecycler = findViewById(R.id.listRecycler)
+        emptyStateCard = findViewById(R.id.emptyStateCard)
 
-        titleText.text = getString(R.string.similar_duplicates)
+        topAppBar.title = getString(R.string.similar_duplicates)
+        topAppBar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         statusText.text = getString(R.string.analyzing)
         progressBar.isIndeterminate = true
         actionButton.visibility = View.GONE
@@ -79,6 +83,8 @@ class SimilarDuplicatesActivity : AppCompatActivity() {
                 if (basics.isEmpty()) {
                     statusText.text = getString(R.string.nothing_found)
                     progressBar.visibility = View.GONE
+                    emptyStateCard.visibility = View.VISIBLE
+                    listRecycler.visibility = View.GONE
                     return@launch
                 }
 
@@ -100,7 +106,10 @@ class SimilarDuplicatesActivity : AppCompatActivity() {
                 }
 
                 progressBar.visibility = View.GONE
-                statusText.text = if (clusters.isEmpty()) getString(R.string.nothing_found) else "${clusters.size} clusters"
+                val isEmpty = clusters.isEmpty()
+                emptyStateCard.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                listRecycler.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                statusText.text = if (isEmpty) getString(R.string.nothing_found) else "${clusters.size} clusters"
                 adapter.submitList(clusters)
 
                 val allCandidateIds = clusters

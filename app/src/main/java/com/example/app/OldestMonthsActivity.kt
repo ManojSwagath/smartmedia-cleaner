@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,10 +19,11 @@ import java.util.Locale
 
 class OldestMonthsActivity : AppCompatActivity() {
 
-    private lateinit var titleText: TextView
+    private lateinit var topAppBar: MaterialToolbar
     private lateinit var statusText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var listRecycler: RecyclerView
+    private lateinit var emptyStateCard: android.view.View
 
     private lateinit var repository: MediaStoreRepository
     private lateinit var adapter: MonthGroupAdapter
@@ -32,12 +34,14 @@ class OldestMonthsActivity : AppCompatActivity() {
 
         repository = MediaStoreRepository(this)
 
-        titleText = findViewById(R.id.titleText)
+        topAppBar = findViewById(R.id.topAppBar)
         statusText = findViewById(R.id.statusText)
         progressBar = findViewById(R.id.progressBar)
         listRecycler = findViewById(R.id.listRecycler)
+        emptyStateCard = findViewById(R.id.emptyStateCard)
 
-        titleText.text = getString(R.string.oldest_files)
+        topAppBar.title = getString(R.string.oldest_files)
+        topAppBar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         statusText.text = getString(R.string.analyzing)
         progressBar.isIndeterminate = true
 
@@ -68,13 +72,18 @@ class OldestMonthsActivity : AppCompatActivity() {
                 if (basics.isEmpty()) {
                     statusText.text = getString(R.string.nothing_found)
                     progressBar.visibility = View.GONE
+                    emptyStateCard.visibility = View.VISIBLE
+                    listRecycler.visibility = View.GONE
                     return@launch
                 }
 
                 val groups = withContext(Dispatchers.Default) { groupByMonth(basics) }
 
                 progressBar.visibility = View.GONE
-                statusText.text = if (groups.isEmpty()) getString(R.string.nothing_found) else "${groups.size} months"
+                val isEmpty = groups.isEmpty()
+                emptyStateCard.visibility = if (isEmpty) android.view.View.VISIBLE else android.view.View.GONE
+                listRecycler.visibility = if (isEmpty) android.view.View.GONE else android.view.View.VISIBLE
+                statusText.text = if (isEmpty) getString(R.string.nothing_found) else "${groups.size} months"
                 adapter.submitList(groups)
 
             } catch (e: Exception) {

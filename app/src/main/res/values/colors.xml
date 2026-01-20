@@ -8,6 +8,22 @@
 
     <color name="outline">#E2E8F0</color>
 
+    <!-- Semantic -->
+    <color name="error">#B00020</color>
+    <color name="on_error">#FFFFFF</color>
+
+    <!-- Glass tokens -->
+    <color name="glass_surface">#CCFFFFFF</color>
+    <color name="glass_stroke">#22FFFFFF</color>
+    <color name="glass_icon_bg">#33FFFFFF</color>
+
+    <!-- Tiles (on colored backgrounds) -->
+    <color name="tile_on">#FFFFFF</color>
+    <color name="tile_on_secondary">#CCFFFFFF</color>
+
+    <!-- Selection overlay -->
+    <color name="selection_overlay">#802563EB</color>
+
     <color name="feature_whatsapp">#22C55E</color>
     <color name="feature_screenshots">#7C3AED</color>
     <color name="feature_large">#F97316</color>

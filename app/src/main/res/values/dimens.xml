@@ -1,0 +1,20 @@
+<resources>
+    <!-- Spacing scale -->
+    <dimen name="space_2">8dp</dimen>
+    <dimen name="space_3">12dp</dimen>
+    <dimen name="space_4">16dp</dimen>
+    <dimen name="space_5">20dp</dimen>
+
+    <!-- Aliases used by newer layouts -->
+    <dimen name="space_xs">@dimen/space_2</dimen>
+    <dimen name="space_sm">@dimen/space_3</dimen>
+    <dimen name="space_md">@dimen/space_4</dimen>
+    <dimen name="space_lg">@dimen/space_5</dimen>
+
+    <!-- Radius scale -->
+    <dimen name="radius_md">18dp</dimen>
+    <dimen name="radius_lg">24dp</dimen>
+
+    <!-- Controls -->
+    <dimen name="button_min_height">52dp</dimen>
+</resources>

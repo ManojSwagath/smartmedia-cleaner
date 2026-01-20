@@ -1,0 +1,39 @@
+<resources>
+    <!-- Core scheme (dark) -->
+    <color name="primary">#3B82F6</color>
+    <color name="on_primary">#0B1220</color>
+
+    <color name="background">#0B1220</color>
+    <color name="on_background">#E5E7EB</color>
+
+    <color name="surface">#0F172A</color>
+    <color name="on_surface">#CBD5E1</color>
+
+    <color name="outline">#223047</color>
+
+    <!-- Semantic -->
+    <color name="error">#F87171</color>
+    <color name="on_error">#1F0A0A</color>
+
+    <!-- Glass tokens -->
+    <color name="glass_surface">#1F111827</color>
+    <color name="glass_stroke">#33FFFFFF</color>
+    <color name="glass_icon_bg">#1FFFFFFF</color>
+
+    <!-- Tiles (kept bright on colored backgrounds) -->
+    <color name="tile_on">#FFFFFF</color>
+    <color name="tile_on_secondary">#CCFFFFFF</color>
+
+    <!-- Selection overlay -->
+    <color name="selection_overlay">#804F46E5</color>
+
+    <!-- Feature colors (keep consistent) -->
+    <color name="feature_whatsapp">#22C55E</color>
+    <color name="feature_screenshots">#7C3AED</color>
+    <color name="feature_large">#F97316</color>
+    <color name="feature_oldest">#06B6D4</color>
+    <color name="feature_duplicates">#3B82F6</color>
+    <color name="feature_blurry">#6366F1</color>
+    <color name="feature_bursts">#F59E0B</color>
+    <color name="feature_events">#14B8A6</color>
+</resources>

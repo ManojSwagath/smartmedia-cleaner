@@ -5,70 +5,124 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/previewPager"
+    <eightbitlab.com.blurview.BlurTarget
+        android:id="@+id/previewBlurTarget"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/previewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </eightbitlab.com.blurview.BlurTarget>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:orientation="vertical"
         android:padding="12dp">
 
-        <TextView
-            android:id="@+id/titleText"
+        <eightbitlab.com.blurview.BlurView
+            android:id="@+id/topBlur"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_glass_panel" />
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:background="@drawable/bg_glass_panel"
+            app:cardBackgroundColor="@color/glass_surface"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/glass_stroke"
+            app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/subtitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#C9FFFFFF"
-            android:textSize="12sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tile_on"
+                    android:textAppearance="@style/TextAppearance.App.Title" />
 
-    <LinearLayout
+                <TextView
+                    android:id="@+id/subtitleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/tile_on_secondary"
+                    android:textAppearance="@style/TextAppearance.App.Caption" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:layout_margin="12dp">
+
+        <eightbitlab.com.blurview.BlurView
+            android:id="@+id/bottomBlur"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_glass_panel" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_glass_panel"
+            app:cardBackgroundColor="@color/glass_surface"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/glass_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/selectedCountText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#C9FFFFFF"
-            android:textSize="12sp"
+            android:textColor="@color/tile_on_secondary"
+            android:textAppearance="@style/TextAppearance.App.Caption"
             android:text="@string/selected_count_zero" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/selectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/select"
-            android:backgroundTint="#333333"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/tile_on"
+            app:backgroundTint="#334155" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="@string/delete_selected"
-            android:backgroundTint="#B00020"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/tile_on"
+            app:backgroundTint="?attr/colorError" />
 
-    </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
 
 </FrameLayout>

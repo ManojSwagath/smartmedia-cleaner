@@ -52,6 +52,11 @@ internal class MediaAdapter(
 
     fun getSelectedIdsSnapshot(): Set<Long> = selectedIds.toSet()
 
+    fun idAtPosition(position: Int): Long? {
+        if (position < 0 || position >= items.size) return null
+        return items[position].id
+    }
+
     fun idsInPositionRange(from: Int, to: Int): Set<Long> {
         if (items.isEmpty()) return emptySet()
         val start = minOf(from, to).coerceAtLeast(0)
@@ -155,7 +160,30 @@ internal class MediaAdapter(
 
         fun bind(item: MediaStoreRepository.MediaItem, selected: Boolean) {
             current = item
-            overlay.visibility = if (selected) View.VISIBLE else View.GONE
+            if (selected) {
+                if (overlay.visibility != View.VISIBLE) {
+                    overlay.alpha = 0f
+                    overlay.visibility = View.VISIBLE
+                }
+                overlay.animate().cancel()
+                overlay.animate()
+                    .alpha(1f)
+                    .setDuration(120)
+                    .start()
+            } else {
+                overlay.animate().cancel()
+                if (overlay.visibility == View.VISIBLE) {
+                    overlay.animate()
+                        .alpha(0f)
+                        .setDuration(110)
+                        .withEndAction {
+                            overlay.visibility = View.GONE
+                        }
+                        .start()
+                } else {
+                    overlay.visibility = View.GONE
+                }
+            }
 
             image.load(item.contentUri) {
                 crossfade(true)

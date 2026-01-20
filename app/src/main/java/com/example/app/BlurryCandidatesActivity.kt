@@ -9,18 +9,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BlurryCandidatesActivity : AppCompatActivity() {
 
-    private lateinit var titleText: TextView
+    private lateinit var topAppBar: MaterialToolbar
     private lateinit var statusText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var actionButton: Button
     private lateinit var controlsText: TextView
     private lateinit var controlsSeekBar: SeekBar
+    private lateinit var emptyStateCard: View
 
     private lateinit var repository: MediaStoreRepository
     private lateinit var cacheDb: AnalysisCacheDb
@@ -34,17 +36,19 @@ class BlurryCandidatesActivity : AppCompatActivity() {
         repository = MediaStoreRepository(this)
         cacheDb = AnalysisCacheDb(this)
 
-        titleText = findViewById(R.id.titleText)
+        topAppBar = findViewById(R.id.topAppBar)
         statusText = findViewById(R.id.statusText)
         progressBar = findViewById(R.id.progressBar)
         actionButton = findViewById(R.id.actionButton)
         controlsText = findViewById(R.id.controlsText)
         controlsSeekBar = findViewById(R.id.controlsSeekBar)
+        emptyStateCard = findViewById(R.id.emptyStateCard)
 
         // Hide list for now; we jump directly to the review grid.
         findViewById<View>(R.id.listRecycler).visibility = View.GONE
 
-        titleText.text = getString(R.string.blurry_candidates)
+        topAppBar.title = getString(R.string.blurry_candidates)
+        topAppBar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         statusText.text = getString(R.string.analyzing)
         progressBar.isIndeterminate = true
 
@@ -75,6 +79,7 @@ class BlurryCandidatesActivity : AppCompatActivity() {
                 if (filteredBasics.isEmpty()) {
                     statusText.text = getString(R.string.nothing_found)
                     progressBar.visibility = View.GONE
+                    emptyStateCard.visibility = View.VISIBLE
                     return@launch
                 }
 
@@ -94,9 +99,11 @@ class BlurryCandidatesActivity : AppCompatActivity() {
 
                 if (analyzed.isEmpty()) {
                     statusText.text = getString(R.string.nothing_found)
+                    emptyStateCard.visibility = View.VISIBLE
                     return@launch
                 }
 
+                emptyStateCard.visibility = View.GONE
                 setupControlsAndWait()
 
             } catch (e: Exception) {

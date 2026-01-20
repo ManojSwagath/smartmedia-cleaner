@@ -28,6 +28,9 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import eightbitlab.com.blurview.BlurView
+import eightbitlab.com.blurview.BlurTarget
+import android.view.ViewOutlineProvider
 
 class PreviewActivity : AppCompatActivity() {
 
@@ -79,6 +82,24 @@ class PreviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preview)
+
+        // Glass blur setup (safe no-op if views not found).
+        val blurTarget = findViewById<BlurTarget?>(R.id.previewBlurTarget)
+        val windowBackground = window.decorView.background
+        fun setupBlur(id: Int) {
+            val blurView = findViewById<BlurView?>(id) ?: return
+            val target = blurTarget ?: return
+            blurView.setupWith(target)
+                .setFrameClearDrawable(windowBackground)
+                .setBlurRadius(18f)
+                .setBlurAutoUpdate(true)
+
+            // Rounded corners for the blur layer (matches bg_glass_panel).
+            blurView.outlineProvider = ViewOutlineProvider.BACKGROUND
+            blurView.clipToOutline = true
+        }
+        setupBlur(R.id.topBlur)
+        setupBlur(R.id.bottomBlur)
 
         val ids = intent.getLongArrayExtra(EXTRA_IDS)
         val startIndex = intent.getIntExtra(EXTRA_START_INDEX, 0).coerceAtLeast(0)
